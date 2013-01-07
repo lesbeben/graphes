@@ -1,12 +1,18 @@
-/**
- * 
- */
 package model;
 
+
 /**
- * @author Beben
+ * 
+ * Modélise un sommet du graphe
  *
  */
-public interface Vertex {
 
+public interface Vertex extends Colored {
+	
+	//REQUETES
+	/**
+	 * Retourne le numéro du sommet
+	 */
+	int getNumber();
+	
 }
