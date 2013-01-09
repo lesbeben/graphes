@@ -35,6 +35,6 @@ public interface Colored {
      * @post
      *     getColor() == c
 	 */
-	Color setColor(Color c);
+	void setColor(Color c);
 
 }
