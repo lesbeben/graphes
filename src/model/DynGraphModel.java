@@ -12,7 +12,7 @@ public interface DynGraphModel extends GraphModel {
      *     getVertexNb() == (old getVertexNumber()) + 1</pre>
      *     le nouveau sommet est ajouté à la liste //ACOMPLETER
      */
-    void addVertex();
+    Vertex addVertex();
     
     /**
      * Retire le sommet numero n du graphe et retire 

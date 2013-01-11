@@ -6,6 +6,7 @@ import java.util.List;
 
 public class StdVertex implements Vertex {
 	
+	private static final long serialVersionUID = 5973984289037546941L;
 	private Color color;
 	private int number;
 	private List<Vertex> adjacents;
@@ -40,7 +41,7 @@ public class StdVertex implements Vertex {
 	}
 
 	@Override
-	public int getAdjacentsNb() {
+	public int getDegree() {
 		return adjacents.size();
 	}
 
@@ -66,8 +67,26 @@ public class StdVertex implements Vertex {
 	}
 
 	@Override
-	public int compareTo(Vertex v) {
+	public int compareTo(Object o) {
+		if (o.getClass() != getClass()){
+			throw new ClassCastException(); 
+		}
+		Vertex v = (Vertex) o;
 		return getNumber() - v.getNumber();
+	}
+
+	@Override
+	public boolean isColored() {
+		return getColor().equals(Colored.INITIAL_COLOR);
+	}
+
+	@Override
+	public void uncolor() {
+		color = Colored.INITIAL_COLOR;
+	}
+	
+	public String toString() {
+		return "(" + getNumber() + "|" + getColor().toString() + ")";
 	}
 
 }

@@ -1,6 +1,8 @@
 package model;
 
+import java.io.Serializable;
 import java.util.List;
+
 
 
 /**
@@ -9,7 +11,7 @@ import java.util.List;
  *
  */
 
-public interface Vertex extends Colored, Comparable<Vertex> {
+public interface Vertex extends Colored, Comparable<Object>, Serializable {
 	
 	
 	//REQUETES
@@ -18,15 +20,16 @@ public interface Vertex extends Colored, Comparable<Vertex> {
 	 */
 	int getNumber();
 	
-	/**
-	 * Retourne les sommet adjacents
-	 */
-	List<Vertex> getAdjacents();
 	
 	/**
 	 * Retourne le nombre de sommets adjacents
 	 */
-	int getAdjacentsNb();
+	int getDegree();
+	
+	/**
+	 * Retourne les sommets adjacents
+	 */
+	List<Vertex> getAdjacents();
 	
 	/**
 	 * Retourne vrai si le noeud courant est connecte au noeud v

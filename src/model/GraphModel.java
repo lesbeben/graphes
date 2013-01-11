@@ -1,5 +1,6 @@
 package model;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -9,7 +10,7 @@ import java.util.Set;
  * Modélise un Graphe non-orienté, non-valué
  *
  */
-public interface GraphModel extends ObservableModel {
+public interface GraphModel extends ObservableModel, Serializable {
 	
 	int MAX_VERTEX_NB = 100;
 	
@@ -47,6 +48,28 @@ public interface GraphModel extends ObservableModel {
 	 * Retourne vrai si v1 est connecté à v2 dans le graphe
 	 */
 	boolean isConnected(Vertex v1, Vertex v2);
+	
+	//COMMANDES
+	/**
+	 * Cree un graphe avec n sommets et les connecte aleatoirement.
+	 * 
+	 * @pre <pre>
+	 * 	   0 <= n <= MAX_VERTEX_NB </pre>
+	 * 
+	 * @post <pre>
+	 * 	   getVerticesNb == n </pre> //ACOMPLETER
+	 */
+	void randomize(int n);
+	
+	/**
+	 * Enleve tous les sommets et les arcs du graphe
+	 */
+	void clear();
+	
+	/**
+	 * Methode pour tricher //ACOMPLETER
+	 */
+	void refresh();
 	
 	
 }

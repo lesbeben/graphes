@@ -4,6 +4,7 @@ import java.awt.Color;
 
 public class StdEdge implements Edge {
 
+	private static final long serialVersionUID = 1462031434686754705L;
 	private Color color;
 	private Vertex v1;
 	private Vertex v2;
@@ -37,12 +38,25 @@ public class StdEdge implements Edge {
 		return (connectedTo(v1) && connectedTo(v2) && (!v1.equals(v2)));
 	}
 	
+	@Override
 	public Vertex[] getVertices() {
 		Vertex[] vertices = new Vertex[2];
 		vertices[0] = v1;
 		vertices[1] = v2;
 		return vertices;
+	}	
+	
+	@Override
+	public boolean isColored() {
+		return getColor().equals(Colored.INITIAL_COLOR);
 	}
 
-		
+	@Override
+	public void uncolor() {
+		color = Colored.INITIAL_COLOR;
+	}
+	
+	public String toString() {
+		return "[" + v1.getNumber() + "|" + getColor().toString() + "|" + v2.getNumber() + "]";
+	}
 }

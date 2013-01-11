@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.TreeSet;
 
 public class StdDynGraphModel extends Observable implements DynGraphModel {
 
+	private static final long serialVersionUID = -3170882226726024740L;
 	private SortedSet<Integer> next;
 	private Set<Vertex> vertices;
 	private List<Edge> edges;
@@ -21,7 +23,8 @@ public class StdDynGraphModel extends Observable implements DynGraphModel {
 		next.add(1);
 		vertices = new LinkedHashSet<Vertex>();
 		edges = new ArrayList<Edge>();
-		
+		adjacence = new HashMap<Vertex, List<Edge>>();
+		setChanged();
 	}
 	@Override
 	public int getVerticesNb() {
@@ -66,15 +69,18 @@ public class StdDynGraphModel extends Observable implements DynGraphModel {
 	}
 
 	@Override
-	public void addVertex() {
+	public Vertex addVertex() {
 		Vertex v = new StdVertex(getNextVertexNb());
 		vertices.add(v);
+		setChanged();
+		return v;
 	}
 
 	@Override
 	public void removeVertex(Vertex v) {
 		vertices.remove(v);
 		next.add(v.getNumber());
+		setChanged();
 	}
 
 	@Override
@@ -102,6 +108,8 @@ public class StdDynGraphModel extends Observable implements DynGraphModel {
 			le.add(e);
 			adjacence.put(v2, le);
 		}
+		edges.add(e);
+		setChanged();
 	}
 
 	@Override
@@ -132,6 +140,51 @@ public class StdDynGraphModel extends Observable implements DynGraphModel {
 		if (adjacence.get(v2).size() == 0) {
 			adjacence.remove(v2);
 		}
+		setChanged();
 	}
-
+	
+	public String toString() {
+		String s = new String();
+		for (Vertex v: getVertices()) {
+			s += v.toString();
+		}
+		s += "\n\n";
+		for (Edge e: getEdges()) {
+			s += e.toString();
+		}
+		s += "\n";
+		return s;
+	}
+	@Override
+	public void randomize(int n) {
+		for (int i = 0; i < n; i++) {
+			addVertex();
+		}
+		Vertex[] vt = new Vertex[10];
+		int i = 0;
+		for (Vertex v: getVertices()) {
+			vt[i]=v;
+			i += 1;
+		}
+		connect(vt[0], vt[1]);
+		connect(vt[1], vt[3]);
+		connect(vt[3], vt[5]);
+		connect(vt[5], vt[6]);
+		connect(vt[6], vt[0]);
+		connect(vt[2], vt[4]);
+		connect(vt[4], vt[8]);
+	}
+	@Override
+	public void clear() {
+		next = new TreeSet<Integer>();
+		next.add(1);
+		vertices = new LinkedHashSet<Vertex>();
+		edges = new ArrayList<Edge>();
+		adjacence = new HashMap<Vertex, List<Edge>>();
+		setChanged();
+	}
+	@Override
+	public void refresh() {
+		setChanged();
+	}
 }

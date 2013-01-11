@@ -4,7 +4,7 @@ import java.awt.Color;
 
 /**
  * 
- * Définit la notion d'objet coloriable, permettant de traiter indifféremment
+ * Définit la notion d'objet coloriable, permettant de traiter de la meme facon
  * la coloration des arêtes et des noeuds du graphe. 
  * 
  * @cons
@@ -26,15 +26,28 @@ public interface Colored {
 	 */
 	Color getColor();
 	
+	/**
+	 * Retourne vrai si l'objet n'est pas noir.
+	 */
+	boolean isColored();
+	
+	
 	//COMMANDES
 	/**
 	 *  Définit la couleur de l'objet.
-     * @pre
-     * 
-     *     c != null
-     * @post
-     *     getColor() == c
+     * @pre <pre>
+     *     c != null</pre>
+     * @post<pre>
+     *     getColor() == c</pre>
 	 */
 	void setColor(Color c);
+	
+	/**
+	 * Reinitialise la couleur de l'objet.
+	 * @post<pre>
+     *     getColor() == c</pre>
+	 */
+	void uncolor();
+	
 
 }
