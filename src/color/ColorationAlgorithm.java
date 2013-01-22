@@ -1,6 +1,8 @@
 package color;
 
 import java.util.Comparator;
+
+import model.Colored;
 import model.Vertex;
 
 
@@ -10,7 +12,7 @@ import model.Vertex;
  *
  */
 
-public interface ColorationAlgorithm extends Comparator<Vertex> {
+public interface ColorationAlgorithm extends Comparator<Colored> {
 	
 	
 	

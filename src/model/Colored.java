@@ -2,6 +2,7 @@ package model;
 
 import java.awt.Color;
 
+
 /**
  * 
  * Définit la notion d'objet coloriable, permettant de traiter de la meme facon
@@ -13,7 +14,7 @@ import java.awt.Color;
  *
  */
 
-public interface Colored {
+public interface Colored extends Comparable<Object>{
 	
 	/**
 	 * La couleur initiale de l'objet 

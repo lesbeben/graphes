@@ -5,13 +5,14 @@ import java.util.List;
 
 
 
+
 /**
  * 
  * Modélise un sommet du graphe
  *
  */
 
-public interface Vertex extends Colored, Comparable<Object>, Serializable {
+public interface Vertex extends Colored, Serializable {
 	
 	
 	//REQUETES

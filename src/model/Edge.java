@@ -27,4 +27,9 @@ public interface Edge extends Colored, Serializable {
 	 */
 	Vertex[] getVertices();
 	
+	/**
+	 * Retourne vrai si les deux arêtes sont adjacentes
+	 */
+	boolean adjacentTo(Edge e);
+	
 }

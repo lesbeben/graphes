@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -70,6 +71,9 @@ public class StdDynGraphModel extends Observable implements DynGraphModel {
 
 	@Override
 	public Vertex addVertex() {
+		if (getVerticesNb() >= MAX_VERTEX_NB) {
+			throw new IllegalStateException();
+		}
 		Vertex v = new StdVertex(getNextVertexNb());
 		vertices.add(v);
 		setChanged();
@@ -80,6 +84,15 @@ public class StdDynGraphModel extends Observable implements DynGraphModel {
 	public void removeVertex(Vertex v) {
 		vertices.remove(v);
 		next.add(v.getNumber());
+		List<Edge> le = new ArrayList<Edge>();
+		for (Edge e: edges) {
+			if (e.connectedTo(v)) {
+				le.add(e);
+			}
+		}
+		for (Edge e: le) {
+			edges.remove(e);
+		}
 		setChanged();
 	}
 
@@ -125,6 +138,7 @@ public class StdDynGraphModel extends Observable implements DynGraphModel {
 		for (Edge e: adjacence.get(v1)) {
 			if (e.connectedTo(v2)) {
 				adjacence.get(v1).remove(e);
+				edges.remove(e);
 				break;
 			}
 		}
@@ -145,16 +159,18 @@ public class StdDynGraphModel extends Observable implements DynGraphModel {
 	
 	public String toString() {
 		String s = new String();
+		s += "Sommets : ";
 		for (Vertex v: getVertices()) {
 			s += v.toString();
 		}
-		s += "\n\n";
+		s += "Arêtes : ";
 		for (Edge e: getEdges()) {
 			s += e.toString();
 		}
 		s += "\n";
 		return s;
 	}
+	
 	@Override
 	public void randomize(int n) {
 		for (int i = 0; i < n; i++) {
@@ -174,6 +190,7 @@ public class StdDynGraphModel extends Observable implements DynGraphModel {
 		connect(vt[2], vt[4]);
 		connect(vt[4], vt[8]);
 	}
+	
 	@Override
 	public void clear() {
 		next = new TreeSet<Integer>();
@@ -183,8 +200,42 @@ public class StdDynGraphModel extends Observable implements DynGraphModel {
 		adjacence = new HashMap<Vertex, List<Edge>>();
 		setChanged();
 	}
+	
 	@Override
 	public void refresh() {
 		setChanged();
+	}
+	public List<Colored> getAdjacents(Colored c) {
+		if (c instanceof Edge) {
+			return getAdjacents((Edge) c);
+		} else if (c instanceof Vertex) {
+			return getAdjacents((Vertex) c);
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+	public List<Colored> getAdjacents(Edge e){
+		List<Colored> lc = new LinkedList<Colored>();
+		for (Edge adj: getAdjacenceMap().get(e.getVertices()[0])) {
+			if (!lc.contains(adj)) {
+				lc.add(adj);
+			}
+		}
+		for (Edge adj: getAdjacenceMap().get(e.getVertices()[1])) {
+			if (!lc.contains(adj)) {
+				lc.add(adj);
+			}
+		}
+		return lc;
+	}
+	
+	public List<Colored> getAdjacents(Vertex v){
+		List<Colored> lc = new LinkedList<Colored>();
+		lc.addAll(v.getAdjacents());
+		return lc;
+	}
+	@Override
+	public int getDegree(Colored c) {
+		return getAdjacents(c).size();
 	}
 }

@@ -59,4 +59,51 @@ public class StdEdge implements Edge {
 	public String toString() {
 		return "[" + v1.getNumber() + "|" + getColor().toString() + "|" + v2.getNumber() + "]";
 	}
+	
+	public boolean equals(Edge e) {
+		return e.connects(this.getVertices()[0], this.getVertices()[1]);
+	}
+
+	@Override
+	public boolean adjacentTo(Edge e) {
+		return ((e.connectedTo(getVertices()[0])) || (e.connectedTo(getVertices()[1])));
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		if (o.getClass() != getClass()){
+			throw new ClassCastException(); 
+		}
+		Edge e = (Edge) o;
+		if (getVertices()[1].compareTo(e.getVertices()[0]) > 0) {
+			if (e.getVertices()[1].compareTo(e.getVertices()[0]) > 0) {
+				if (e.getVertices()[0].equals(getVertices()[0])) {
+					return getVertices()[1].getNumber() - e.getVertices()[1].getNumber();
+				} else {
+					return getVertices()[0].getNumber() - e.getVertices()[0].getNumber();
+				}
+			} else {
+				if (e.getVertices()[1].equals(getVertices()[0])) {
+					return getVertices()[1].getNumber() - e.getVertices()[0].getNumber();
+				} else {
+					return getVertices()[0].getNumber() - e.getVertices()[1].getNumber();
+				}
+			}
+		} else {
+			if (e.getVertices()[1].compareTo(e.getVertices()[0]) > 0) {
+				if (e.getVertices()[0].equals(getVertices()[1])) {
+					return getVertices()[0].getNumber() - e.getVertices()[1].getNumber();
+				} else {
+					return getVertices()[1].getNumber() - e.getVertices()[0].getNumber();
+				}
+			} else {
+				if (e.getVertices()[1].equals(getVertices()[1])) {
+					return getVertices()[0].getNumber() - e.getVertices()[0].getNumber();
+				} else {
+					return getVertices()[1].getNumber() - e.getVertices()[1].getNumber();
+				}
+			}
+		}
+	}
+
 }

@@ -11,34 +11,33 @@ import java.util.Observer;
 
 import javax.swing.JComponent;
 
+import model.DynGraphModel;
 import model.Edge;
 import model.GraphModel;
 import model.Vertex;
 
 public class GraphicGraph extends JComponent {
 
-	private static final int RADIUS = 20;
+	
 	private static final int PREFERRED_WIDTH = 800;
 	private static final int PREFERRED_HEIGHT = 600;
 	private static final long serialVersionUID = -4583711502138269427L;
-	private Map<Vertex, Point> coords;
-	private Map<Point, Vertex> vertices;
-	private GraphModel model;
+	private Map<Vertex, GraphicVertex> vertex;
+	private DynGraphModel model;
 	
-	public GraphicGraph(GraphModel m) {
+	public GraphicGraph(DynGraphModel m) {
 		super();
 		if (m == null) {
 			throw new IllegalArgumentException();
 		}
 		model = m;
 		createController();
-		coords = new HashMap<Vertex, Point>();
-		vertices = new HashMap<Point, Vertex>();
+		vertex = new HashMap<Vertex, GraphicVertex>();
 		if (m.getVertices().size() > 0) {
 			for (Vertex v: m.getVertices()) {
 				Point p = randomNewPoint();
-				coords.put(v, p);
-				vertices.put(p, v);
+				GraphicVertex gv = new GraphicVertex(v, p);
+				vertex.put(v, gv);
 			}
 		}
 	}
@@ -53,8 +52,8 @@ public class GraphicGraph extends JComponent {
 			p1 = new Point ((int) ((Math.random() * (getWidth() - 40)) + 20), (int)((Math.random() * (getHeight() - 40)) + 20));
 		}
 		Boolean used = false;
-		for (Point p2: vertices.keySet()) {
-			if (verticesCollide(p1,p2)) {
+		for (GraphicVertex gv: vertex.values()) {
+			if (verticesCollide(p1, gv.getPoint())) {
 				used = true;
 				break;
 			}
@@ -71,24 +70,26 @@ public class GraphicGraph extends JComponent {
 		return model;
 	}
 	
-	public void setModel(GraphModel m, Map<Vertex, Point> c, Map<Point, Vertex> v) {
+	public int getRadius() {
+		return GraphicVertex.RADIUS;
+	}
+	
+	public void setModel(DynGraphModel m, Map<Vertex, GraphicVertex> v) {
 		if (m == null) {
 			throw new IllegalArgumentException();
 		}
 		model = m;
 		createController();
-		if ((c == null) || (v == null)){
-			coords = new HashMap<Vertex, Point>();
-			vertices = new HashMap<Point, Vertex>();
+		if ( v == null){
+			vertex = new HashMap<Vertex, GraphicVertex>();
 		} else {
-			coords = c;
-			vertices = v;
+			vertex = v;
 		}
 		repaint();
 	}
 	
 	public boolean verticesCollide(Point p1, Point p2){
-	    return (p1.distance(p2) <= (2 * RADIUS));
+	    return (p1.distance(p2) <= (2 * GraphicVertex.RADIUS));
 	}
 	
 	public Dimension getPreferredSize() {
@@ -97,8 +98,7 @@ public class GraphicGraph extends JComponent {
 	
 	public void reset() {
 		model.clear();
-		coords.clear();
-		vertices.clear();
+		vertex.clear();
 	}
 	
 	public void randomize(int n) {
@@ -106,27 +106,63 @@ public class GraphicGraph extends JComponent {
 		model.randomize(n);
 		for (Vertex v: model.getVertices()) {
 			Point p = randomNewPoint();
-			coords.put(v, p);
-			vertices.put(p, v);
+			GraphicVertex gv = new GraphicVertex(v, p);
+			vertex.put(v, gv);
 		}
 	}
 	
-	public Vertex clickedVertex(Point p) {
+	public GraphicVertex clickedVertex(Point p) {
+		if (p == null) {
+			throw new IllegalArgumentException();
+		}
+		p.x -= GraphicVertex.RADIUS;
+		p.y -= GraphicVertex.RADIUS;
 		for (Vertex v: getModel().getVertices()) {
-			if ((Math.abs(p.x - coords.get(v).x + RADIUS) < RADIUS) && (Math.abs(p.y - coords.get(v).y + RADIUS) < RADIUS)) {
-				return v;
+			if ((Math.abs(p.x - vertex.get(v).getPoint().x) < GraphicVertex.RADIUS) && (Math.abs(p.y - vertex.get(v).getPoint().y) < GraphicVertex.RADIUS)) {
+				return vertex.get(v);
 			}
 		}
 		return null;
 	}
 	
 	
-	public Map<Vertex,Point> getCoords() {
-		return coords;
+	public Map<Vertex, GraphicVertex> getCoords() {
+		return vertex;
 	}
 	
-	public Map<Point, Vertex> getVertices() {
-		return vertices;
+	
+	public void addVertex(Point p) {
+		if (p == null) {
+			throw new IllegalArgumentException();
+		}
+		Vertex v = model.addVertex();
+		p.x -= GraphicVertex.RADIUS;
+		p.y -= GraphicVertex.RADIUS;
+		GraphicVertex gv = new GraphicVertex(v, p);
+		vertex.put(v, gv);
+	}
+	
+	public void removeVertex(GraphicVertex gv) { //LEGEREMENT MODIFIE
+		if (gv == null) {
+			throw new IllegalArgumentException();
+		}
+		for (Vertex adj: gv.getVertex().getAdjacents()) {
+			model.disconnect(gv.getVertex(), adj);
+		}
+		model.removeVertex(gv.getVertex());
+		vertex.remove(gv.getVertex());
+	}
+	
+	public void moveVertex(Vertex v, Point p) {
+		if ((p == null) || (v == null)) {
+			throw new IllegalArgumentException();
+		}
+		p.x -= GraphicVertex.RADIUS;
+		p.y -= GraphicVertex.RADIUS;
+		vertex.remove(v);
+		GraphicVertex gv = new GraphicVertex(v, p);
+		vertex.put(v, gv);
+		repaint();
 	}
 	
 	public void createController() {	
@@ -140,30 +176,30 @@ public class GraphicGraph extends JComponent {
 	protected void paintComponent(Graphics g) {
 		for (Edge e: getModel().getEdges()) {
 			g.setColor(e.getColor());
-			Point p1 = coords.get(e.getVertices()[0]);
-			Point p2 = coords.get(e.getVertices()[1]);
-			int x1 = p1.x + RADIUS;
-			int y1 = p1.y + RADIUS;
-			int x2 = p2.x + RADIUS;
-			int y2 = p2.y + RADIUS;
+			Point p1 = vertex.get(e.getVertices()[0]).getPoint();
+			Point p2 = vertex.get(e.getVertices()[1]).getPoint();
+			int x1 = p1.x + GraphicVertex.RADIUS;
+			int y1 = p1.y + GraphicVertex.RADIUS;
+			int x2 = p2.x + GraphicVertex.RADIUS;
+			int y2 = p2.y + GraphicVertex.RADIUS;
 			g.drawLine(x1, y1, x2, y2);
 		}
 		for (Vertex v: getModel().getVertices()) {
 			g.setColor(Color.BLACK);
-			Point p = coords.get(v);
+			Point p = vertex.get(v).getPoint();
 			int x = p.x;
 			int y = p.y;
 			if ((getWidth() > 0) && (getHeight() > 0)) {
 				if (p.x > getWidth()){
-					p.setLocation(getWidth() - (2 * RADIUS), p.y);
+					p.setLocation(getWidth() - (2 * GraphicVertex.RADIUS), p.y);
 				}
 				if (p.y > getHeight()) {
-					p.setLocation(p.x, getHeight() - (2 * RADIUS));
+					p.setLocation(p.x, getHeight() - (2 * GraphicVertex.RADIUS));
 				}
 			}
-			g.drawOval(x, y, 2 * RADIUS, 2 * RADIUS);
+			g.drawOval(x, y, 2 * GraphicVertex.RADIUS, 2 * GraphicVertex.RADIUS);
 			g.setColor(v.getColor());	
-			g.fillOval(x, y, 2 * RADIUS, 2 * RADIUS);
+			g.fillOval(x, y, 2 * GraphicVertex.RADIUS, 2 * GraphicVertex.RADIUS);
 		}
 	}
 }

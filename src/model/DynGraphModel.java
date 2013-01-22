@@ -53,5 +53,6 @@ public interface DynGraphModel extends GraphModel {
      *     l'arête est supprimée la ou il faut (Map(v1), map(v2) //ACOMPLETER
      */
     void disconnect(Vertex v1, Vertex v2);
+    
 }
 

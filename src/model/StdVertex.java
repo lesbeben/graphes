@@ -77,7 +77,7 @@ public class StdVertex implements Vertex {
 
 	@Override
 	public boolean isColored() {
-		return getColor().equals(Colored.INITIAL_COLOR);
+		return !getColor().equals(Colored.INITIAL_COLOR);
 	}
 
 	@Override

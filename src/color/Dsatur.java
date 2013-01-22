@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.LinkedHashSet;
 import java.util.TreeSet;
 
+import model.Colored;
 import model.Edge;
 import model.GraphModel;
 import model.Vertex;
@@ -11,17 +12,20 @@ import model.Vertex;
 public class Dsatur implements ColorationAlgorithm {
 
 	private TreeSet<Vertex> sortedVertices;
+	private TreeSet<Edge> sortedEdges;
 	private int colorNb;
 	private LinkedHashSet<Color> colors;
 	private GraphModel m;
 	
 	public Dsatur(GraphModel model) {
-		if (model == null){
+		if ((model == null) || (model.getVerticesNb() == 0)){
 			throw new IllegalArgumentException();
 		}
 		m = model;
 		sortedVertices = new TreeSet<Vertex>(this);
 		sortedVertices.addAll(m.getVertices());
+		sortedEdges = new TreeSet<Edge>(this);
+		sortedEdges.addAll(m.getEdges());
 		colorNb = sortedVertices.last().getDegree() + 1;
 		colors = new LinkedHashSet<Color>();
 		while (colors.size() < colorNb) {
@@ -45,19 +49,20 @@ public class Dsatur implements ColorationAlgorithm {
 	}
 	
 	/**
-	 * Retourne le DSAT du sommet
+	 * Retourne le DSAT d'un élement colorable
 	 * @pre <pre>
 	 * 	   v != null</pre>
 	 */
-	public int getDSAT(Vertex v) {
+	public int getDSAT(Colored c) {
 		int DSAT = 0;
-		for (Vertex adj: v.getAdjacents()) {
+		for (Colored adj: m.getAdjacents(c)) {
 			if (adj.isColored()) {
 				DSAT += 1;
 			} 
 		}
-		return (DSAT > 0) ? DSAT : v.getDegree();
+		return (DSAT > 0) ? DSAT : m.getDegree(c);
 	}
+		
 	
 	@Override
 	public void color() {
@@ -72,7 +77,7 @@ public class Dsatur implements ColorationAlgorithm {
 			v = sortedVertices.pollLast();
 			for (Color c: colors){
 				boolean used = false;
-				for (Vertex adj: v.getAdjacents()) {
+				for (Colored adj: m.getAdjacents(v)) {
 					if (adj.getColor() == c) {
 						used = true;
 						break;
@@ -84,7 +89,26 @@ public class Dsatur implements ColorationAlgorithm {
 					break;
 				}
 			}
-		}		
+		}	
+		Edge e = sortedEdges.pollLast();
+		e.setColor((Color) colors.toArray()[0]);
+		while (sortedEdges.size() > 0){
+			e = sortedEdges.pollLast();
+			for (Color c: colors){
+				boolean used = false;
+				for (Colored adj: m.getAdjacents(e)) {
+					if (adj.getColor() == c) {
+						used = true;
+						break;
+					}
+				}
+				if (used == false) {
+					e.setColor(c);
+					
+					break;
+				}
+			}
+		}	
 		m.refresh();
 	}
 
@@ -103,14 +127,14 @@ public class Dsatur implements ColorationAlgorithm {
 	}
 
 	@Override
-	public int compare(Vertex v1, Vertex v2) {
-		if ((v1 == null)|| (v2 == null)) {
+	public int compare(Colored c1, Colored c2) {
+		if ((c1 == null)|| (c2 == null)) {
 			throw new IllegalArgumentException();
 		}
-		if (getDSAT(v1) == getDSAT(v2)) {
-			return v1.compareTo(v2);
+		if (getDSAT(c1) == getDSAT(c2)) {
+			return c1.compareTo(c2);
 		} else {
-			return getDSAT(v1) - getDSAT(v2);
+			return getDSAT(c1) - getDSAT(c2);
 		}
 	}
 }

@@ -49,6 +49,16 @@ public interface GraphModel extends ObservableModel, Serializable {
 	 */
 	boolean isConnected(Vertex v1, Vertex v2);
 	
+	/**
+	 * Comm à faire
+	 * @param c
+	 * @return
+	 */
+	public List<Colored> getAdjacents(Colored c);
+	
+	
+	public int getDegree(Colored c);
+	
 	//COMMANDES
 	/**
 	 * Cree un graphe avec n sommets et les connecte aleatoirement.

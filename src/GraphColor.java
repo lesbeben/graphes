@@ -1,11 +1,17 @@
 import gui.GraphicGraph;
+import gui.GraphicVertex;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.Line2D;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,11 +25,13 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -34,7 +42,6 @@ import color.ColorationAlgorithm;
 import color.Dsatur;
 import color.ImplementedAlgorithms;
 import model.DynGraphModel;
-import model.GraphModel;
 import model.StdDynGraphModel;
 import model.Vertex;
 
@@ -49,20 +56,24 @@ public class GraphColor {
 	private JButton randomButton = null;
 	private JButton saveButton = null;
 	private JButton loadButton = null;
-	private JToggleButton moveButton = null;
 	private JToggleButton vertexButton = null;
 	private JToggleButton edgeButton = null;
 	private JComboBox<String> algoButton = null;
 	private JButton colorButton = null;
 	private JButton uncolorButton = null;
-	private DynGraphModel model;
-	private ColorationAlgorithm algo;
-	private GraphicGraph graphic;
-	private enum tools {
-		MOVE,VERTEX,EDGE;
+	private DynGraphModel model = null;
+	private ColorationAlgorithm algo = null;
+	private GraphicGraph graphic = null;
+	private JLabel status = null;
+	private boolean dragging = false;
+	private GraphicVertex draggedVertex = null;
+	private enum Tools {
+		VERTEX,EDGE;
 	}
-	private tools mode = tools.VERTEX;
+	private Tools mode = Tools.VERTEX;
 	private ImplementedAlgorithms setAlgo = null;
+	private boolean colored = false;
+	private Line2D line = null;
 	
 	public GraphColor(){
 		createModel();
@@ -89,7 +100,6 @@ public class GraphColor {
 		randomButton = new JButton("Aleatoire");
 		saveButton = new JButton("Sauvegarder");
 		loadButton = new JButton("Charger");
-		moveButton = new JToggleButton("Deplacer");
 		vertexButton = new JToggleButton("Sommet");
 		edgeButton = new JToggleButton("Arete");
 		String[] algos = { "DSATUR", "Algo 2", "Algo 3", "Algo 4", "Algo 5" };
@@ -99,6 +109,8 @@ public class GraphColor {
 		uncolorButton = new JButton("Decolorier");
         contentPane = new JPanel(new BorderLayout());
         graphic = new GraphicGraph(model);
+        status = new JLabel("Yo");
+        status.setBorder(BorderFactory.createEtchedBorder());
 		contentPane.setBackground(Color.WHITE);
     	frame.setPreferredSize(
                 new Dimension(FRAME_WIDTH, FRAME_HEIGHT)
@@ -116,7 +128,7 @@ public class GraphColor {
 			toolBar.add(loadButton);
 			toolBar.addSeparator();
 			toolBar.addSeparator();
-			toolBar.add(moveButton);
+			//toolBar.add(new JLabel("Outils : "));
 			toolBar.add(vertexButton);
 			toolBar.add(edgeButton);
 			toolBar.addSeparator();
@@ -129,37 +141,25 @@ public class GraphColor {
 		contentPane.add(toolBar, BorderLayout.NORTH);
 		contentPane.add(graphic,BorderLayout.CENTER);
 		frame.add(contentPane);
+		frame.add(status, BorderLayout.SOUTH);
 	}
 	
 	private void createController() {
 		model.addObserver(new Observer() {
             public void update(Observable o, Object arg) {
-               if (model.getVerticesNb() >= GraphModel.MAX_VERTEX_NB) {
-            	   vertexButton.setEnabled(false);
-            	   mode = tools.MOVE;
-            	   moveButton.setSelected(true);  
-               } else {
-            	   vertexButton.setEnabled(true);
             	   if (model.getVerticesNb() == 0) {
-            		   mode = tools.VERTEX;
-            		   vertexButton.setSelected(true);
-            		   moveButton.setEnabled(false);
-            		   edgeButton.setEnabled(false);
+            		   mode = Tools.VERTEX;
             		   saveButton.setEnabled(false);
             		   colorButton.setEnabled(false);
             		   uncolorButton.setEnabled(false);
             	   } else {
-            		   moveButton.setEnabled(true);
-            		   edgeButton.setEnabled(true);
             		   saveButton.setEnabled(true);
             		   colorButton.setEnabled(true);
             		   uncolorButton.setEnabled(true);
             	   }
-               }
             }
         });
 		ButtonGroup bg = new ButtonGroup();
-		bg.add(moveButton);
         bg.add(vertexButton);
         bg.add(edgeButton);
         vertexButton.setSelected(true);
@@ -170,11 +170,67 @@ public class GraphColor {
         		model.notifyObservers();
         	}
         });
+        newButton.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				status.setText("Crée un nouveau graphe (page vierge).");
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {	
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				
+			}
+        	
+        });
         randomButton.addActionListener( new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
         		graphic.randomize(10); 
         		model.notifyObservers();
         	}
+        });
+        randomButton.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				status.setText("Génère un graphe aléatoire.");
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {	
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				
+			}
+        	
         });
         saveButton.addActionListener( new ActionListener(){
         	public void actionPerformed(ActionEvent e)  {
@@ -186,6 +242,34 @@ public class GraphColor {
 						e1.printStackTrace();
 					}
         	}
+        });
+        saveButton.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				status.setText("Sauvegarde le graphe actuel.");
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {	
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				
+			}
+        	
         });
         loadButton.addActionListener(new ActionListener(){
         	public void actionPerformed(ActionEvent e) {
@@ -203,27 +287,106 @@ public class GraphColor {
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
+                    status.setText("Chargé : " + f.getAbsolutePath());
                     model.notifyObservers();
         		}
         	}
         });
-        moveButton.addActionListener( new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		mode = tools.MOVE; 
-        		model.notifyObservers();
-        	}
+        loadButton.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				status.setText("Charge un graphe depuis un fichier compatible (.gra).");
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {	
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				
+			}
+        	
         });
         vertexButton.addActionListener( new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		mode = tools.VERTEX; 
+        		mode = Tools.VERTEX; 
         		model.notifyObservers();
         	}
         });
+        vertexButton.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				status.setText("Selectionne l'outil Sommet (Ajout, Suppression et Déplacement).");
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {	
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				
+			}
+        	
+        });
         edgeButton.addActionListener( new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		mode = tools.EDGE; 
+        		mode = Tools.EDGE; 
         		model.notifyObservers();
         	}
+        });
+        edgeButton.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				status.setText("Selectionne l'outil Arête (Ajout et Suppression).");
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {	
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				
+			}
+        	
         });
         algoButton.addActionListener( new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
@@ -231,32 +394,265 @@ public class GraphColor {
         		model.notifyObservers();
         	}
         });
+        algoButton.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				status.setText("Sélectionne l'algorithme utilisé pour colorier le graphe.");
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {	
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				
+			}
+        	
+        });
         colorButton.addActionListener( new ActionListener() { //A NETTOYER
         	public void actionPerformed(ActionEvent e) {
         		algo = new Dsatur(model);
         		algo.color();
+        		colored = true;
         		model.notifyObservers();
         	}
+        });
+        colorButton.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				status.setText("Colorie le graphe suivant l'algorithme indiqué");
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {	
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				
+			}
+        	
         });
         uncolorButton.addActionListener( new ActionListener() { //A NETTOYER
         	public void actionPerformed(ActionEvent e) {
         		algo = new Dsatur(model);
         		algo.uncolor();
+        		colored = false;
         		model.notifyObservers();
         	}
         });
+        uncolorButton.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				status.setText("Colorie tout le graphe en noir.");
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {	
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				
+			}
+        	
+        });
+        graphic.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				switch (mode) {
+					case VERTEX:
+						Point p = arg0.getPoint();
+						if(SwingUtilities.isRightMouseButton(arg0)){
+							GraphicVertex gv = graphic.clickedVertex(p);
+							if (gv != null) {
+								graphic.removeVertex(gv);
+								if ((colored == true) && (gv.getVertex().getDegree() > 0)) {
+									algo = new Dsatur(model); //A CHANGER
+									algo.color();
+								}
+							}
+						} else {
+							graphic.addVertex(p);
+						}
+						break;
+					case EDGE:
+						break;
+					default:
+						break;
+				}
+				model.notifyObservers();
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				switch (mode) {
+					case VERTEX:
+						graphic.setCursor(new Cursor(Cursor.HAND_CURSOR));
+						status.setText("<Clic gauche> ajoute un sommet. <Clic droit> supprime un sommet. Maintenir pour déplacer.");
+						break;
+					case EDGE:
+						graphic.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+						status.setText("<Clic gauche> sur un sommet puis glisser-déposer pour tracer un arc. <Clic droit> puis glisser-déposer pour supprimer un arc .");
+						break;
+					default:
+						break;
+				}
+			}
+
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				GraphicVertex gv = graphic.clickedVertex(arg0.getPoint());
+				switch (mode) {
+					case VERTEX:
+						if (gv != null) {
+							dragging = true;
+							draggedVertex = gv;
+						} else {
+							dragging = false;
+							draggedVertex = null;
+						}
+						break;
+					case EDGE:
+						if (gv != null) {
+							dragging = true;
+							draggedVertex = gv;
+						} else {
+							dragging = false;
+							draggedVertex = null;
+						}
+						break;
+					default:
+						break;
+				}
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				switch (mode) {
+					case VERTEX:
+						if (dragging == true){
+							graphic.moveVertex(draggedVertex.getVertex(), arg0.getPoint());
+						}
+						dragging = false;
+						draggedVertex = null;
+						break;
+					case EDGE:
+						if (dragging == true){
+							GraphicVertex gv = graphic.clickedVertex(arg0.getPoint());
+							if (gv != null) {
+								if (SwingUtilities.isRightMouseButton(arg0)) {
+									if ((gv.getVertex().isConnectedTo(draggedVertex.getVertex()) && (!gv.getVertex().equals(draggedVertex.getVertex()))) ) {
+										model.disconnect(gv.getVertex(), draggedVertex.getVertex());
+										if (colored == true) {
+											algo = new Dsatur(model); //A CHANGER
+											algo.color();
+										}
+									}
+								} else {
+									if ((!gv.getVertex().isConnectedTo(draggedVertex.getVertex()) && (!gv.getVertex().equals(draggedVertex.getVertex()))) ) {
+										model.connect(gv.getVertex(), draggedVertex.getVertex());
+										if (colored == true) {
+											algo = new Dsatur(model); //A CHANGER
+											algo.color();
+										}
+									}
+								}
+							}
+						}
+						dragging = false;
+						draggedVertex = null;
+						model.notifyObservers();
+						break;
+				}
+			}
+        	
+        });
+        graphic.addMouseMotionListener(new MouseMotionListener() {
+			
+			@Override
+			public void mouseMoved(MouseEvent arg0) {
+
+			}
+			
+			@Override
+			public void mouseDragged(MouseEvent arg0) {
+				switch (mode) {
+					case VERTEX:
+						if (dragging) {
+							graphic.moveVertex(draggedVertex.getVertex(), arg0.getPoint());
+						}
+						model.notifyObservers();
+						break;
+					case EDGE:
+						if (dragging) {
+							graphic.getGraphics().drawLine(draggedVertex.getPoint().x + GraphicVertex.RADIUS
+									, draggedVertex.getPoint().y + GraphicVertex.RADIUS, arg0.getPoint().x, arg0.getPoint().y);
+						    graphic.repaint();
+						}
+						model.notifyObservers();
+						break;
+				}
+			}
+		});
         
 	}
 	
 	public void saveState() throws IOException, FileNotFoundException {
 		Date now = new Date();
 	    SimpleDateFormat sdf = new SimpleDateFormat ("dd-MM-yyyy.hhmmssa'.gra'");
-		FileOutputStream fos = new FileOutputStream(sdf.format(now));
+	    String s = sdf.format(now);
+		FileOutputStream fos = new FileOutputStream(s);
 		ObjectOutputStream oos =new ObjectOutputStream(fos);
 		oos.writeObject(model);
 		oos.writeObject(graphic.getCoords());
-		oos.writeObject(graphic.getVertices());
 		oos.close();
+		status.setText("Sauvé : " + s);
 	}
 	
 	public void load(File f) throws IOException, FileNotFoundException, ClassNotFoundException{
@@ -266,9 +662,8 @@ public class GraphColor {
 		FileInputStream fis = new FileInputStream(f);
         ObjectInputStream ois = new ObjectInputStream(fis);
         model = (DynGraphModel) ois.readObject();
-		Map<Vertex, Point> c = (Map<Vertex, Point>) ois.readObject();
-		Map<Point, Vertex> v = (Map<Point, Vertex>) ois.readObject();
-        graphic.setModel(model, c, v);
+		Map<Vertex, GraphicVertex> c = (Map<Vertex, GraphicVertex>) ois.readObject(); //???
+        graphic.setModel(model, c);
         ois.close();
 	}
 	
