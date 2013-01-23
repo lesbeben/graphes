@@ -9,7 +9,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.io.File;
@@ -170,33 +170,11 @@ public class GraphColor {
         		model.notifyObservers();
         	}
         });
-        newButton.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-			}
-
+        newButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				status.setText("Crée un nouveau graphe (page vierge).");
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {	
-				
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				
-			}
-        	
+			}  	
         });
         randomButton.addActionListener( new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
@@ -204,33 +182,11 @@ public class GraphColor {
         		model.notifyObservers();
         	}
         });
-        randomButton.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-			}
-
+        randomButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				status.setText("Génère un graphe aléatoire.");
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {	
-				
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				
-			}
-        	
+			}      	
         });
         saveButton.addActionListener( new ActionListener(){
         	public void actionPerformed(ActionEvent e)  {
@@ -243,33 +199,11 @@ public class GraphColor {
 					}
         	}
         });
-        saveButton.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-			}
-
+        saveButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				status.setText("Sauvegarde le graphe actuel.");
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {	
-				
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				
-			}
-        	
+			}      	
         });
         loadButton.addActionListener(new ActionListener(){
         	public void actionPerformed(ActionEvent e) {
@@ -292,33 +226,11 @@ public class GraphColor {
         		}
         	}
         });
-        loadButton.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-			}
-
+        loadButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				status.setText("Charge un graphe depuis un fichier compatible (.gra).");
 			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {	
-				
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				
-			}
-        	
         });
         vertexButton.addActionListener( new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
@@ -326,33 +238,11 @@ public class GraphColor {
         		model.notifyObservers();
         	}
         });
-        vertexButton.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-			}
-
+        vertexButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				status.setText("Selectionne l'outil Sommet (Ajout, Suppression et Déplacement).");
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {	
-				
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				
-			}
-        	
+			}      	
         });
         edgeButton.addActionListener( new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
@@ -360,33 +250,11 @@ public class GraphColor {
         		model.notifyObservers();
         	}
         });
-        edgeButton.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-			}
-
+        edgeButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				status.setText("Selectionne l'outil Arête (Ajout et Suppression).");
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {	
-				
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				
-			}
-        	
+			}    	
         });
         algoButton.addActionListener( new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
@@ -394,33 +262,11 @@ public class GraphColor {
         		model.notifyObservers();
         	}
         });
-        algoButton.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-			}
-
+        algoButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				status.setText("Sélectionne l'algorithme utilisé pour colorier le graphe.");
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {	
-				
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				
-			}
-        	
+			}  	
         });
         colorButton.addActionListener( new ActionListener() { //A NETTOYER
         	public void actionPerformed(ActionEvent e) {
@@ -430,33 +276,11 @@ public class GraphColor {
         		model.notifyObservers();
         	}
         });
-        colorButton.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-			}
-
+        colorButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				status.setText("Colorie le graphe suivant l'algorithme indiqué");
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {	
-				
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				
-			}
-        	
+			}    	
         });
         uncolorButton.addActionListener( new ActionListener() { //A NETTOYER
         	public void actionPerformed(ActionEvent e) {
@@ -466,35 +290,13 @@ public class GraphColor {
         		model.notifyObservers();
         	}
         });
-        uncolorButton.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-			}
-
+        uncolorButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				status.setText("Colorie tout le graphe en noir.");
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {	
-				
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				
-			}
-        	
+			}   	
         });
-        graphic.addMouseListener(new MouseListener() {
+        graphic.addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -536,12 +338,6 @@ public class GraphColor {
 					default:
 						break;
 				}
-			}
-
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-				
-				
 			}
 
 			@Override

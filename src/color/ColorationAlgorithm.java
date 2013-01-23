@@ -3,7 +3,6 @@ package color;
 import java.util.Comparator;
 
 import model.Colored;
-import model.Vertex;
 
 
 /**
