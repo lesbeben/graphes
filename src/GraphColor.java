@@ -102,7 +102,7 @@ public class GraphColor {
 		loadButton = new JButton("Charger");
 		vertexButton = new JToggleButton("Sommet");
 		edgeButton = new JToggleButton("Arete");
-		String[] algos = { "DSATUR", "Algo 2", "Algo 3", "Algo 4", "Algo 5" };
+		String[] algos = { "DSATUR", "Welsh Powell", "Backtracking" };
 		algoButton= new JComboBox<String>(algos);
 		algoButton.setSelectedIndex(0);
 		colorButton = new JButton("Colorier");
