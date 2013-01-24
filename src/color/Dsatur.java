@@ -15,7 +15,6 @@ public class Dsatur implements ColorationAlgorithm {
 	private TreeSet<Edge> sortedEdges;
 	private int colorNb;
 	private LinkedHashSet<Color> colors;
-	private LinkedHashSet<Color> ecolors;
 	private GraphModel m;
 	
 	public Dsatur(GraphModel model) {
@@ -27,9 +26,31 @@ public class Dsatur implements ColorationAlgorithm {
 		sortedVertices.addAll(m.getVertices());
 		sortedEdges = new TreeSet<Edge>(this);
 		sortedEdges.addAll(m.getEdges());
-		colorNb = sortedVertices.last().getDegree() + 1;
+		colorNb = m.getDegree(sortedVertices.last()) + 1;
+		if (colorNb < (m.getDegree(sortedEdges.last()) + 1)) {
+			colorNb = m.getDegree(sortedEdges.last()) + 1;
+		}
 		colors = new LinkedHashSet<Color>();
+		colors.add(Color.RED);
+		colors.add(Color.BLUE);
+		colors.add(Color.YELLOW);
+		colors.add(Color.GREEN);
+		colors.add(Color.ORANGE);
+		colors.add(Color.PINK);
+		colors.add(Color.MAGENTA);
 		while (colors.size() < colorNb) {
+			int r =(int) (Math.random() * 254);
+			r -= (r % 32);
+			r += 1;
+			int g =(int) (Math.random() * 254);
+			g -= g % 32;
+			g += 1;
+			int b =(int) (Math.random() * 254);
+			b -= b % 32;
+			b += 1;
+			colors.add(new Color(r, g, b));
+		}
+		/*while (colors.size() < colorNb) {
 			//Random random = new Random();
 			//float hue = random.nextFloat();
 			//float saturation = 0.9f;
@@ -65,7 +86,7 @@ public class Dsatur implements ColorationAlgorithm {
 			b -= b % 32;
 			b += 1;
 			ecolors.add(new Color(r, g, b));
-		}
+		} */
 	}
 	
 	/**
@@ -111,10 +132,10 @@ public class Dsatur implements ColorationAlgorithm {
 			}
 		}	
 		Edge e = sortedEdges.pollLast();
-		e.setColor((Color) ecolors.toArray()[0]);
+		e.setColor((Color) colors.toArray()[0]);
 		while (sortedEdges.size() > 0){
 			e = sortedEdges.pollLast();
-			for (Color c: ecolors){
+			for (Color c: colors){
 				boolean used = false;
 				for (Colored adj: m.getAdjacents(e)) {
 					if (adj.getColor() == c) {
@@ -135,7 +156,7 @@ public class Dsatur implements ColorationAlgorithm {
 	@Override
 	public void uncolor() {
 		if (m == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalStateException();
 		}
 		for (Vertex v: m.getVertices()) {
 			v.uncolor();

@@ -35,6 +35,10 @@ public interface ColorationAlgorithm extends Comparator<Colored> {
 	
 	void uncolor();
 	
+	public static enum Colors {
+		RED,BLUE,YELLOW,PURPLE,ORANGE,GREEN,PINK
+	}
+	
 	
 	
 }

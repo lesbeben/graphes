@@ -93,6 +93,7 @@ public class StdDynGraphModel extends Observable implements DynGraphModel {
 		for (Edge e: le) {
 			edges.remove(e);
 		}
+		adjacence.remove(v);
 		setChanged();
 	}
 
