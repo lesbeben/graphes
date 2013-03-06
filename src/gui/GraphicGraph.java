@@ -146,9 +146,9 @@ public class GraphicGraph extends JComponent {
 		if (gv == null) {
 			throw new IllegalArgumentException();
 		}
-		for (Vertex adj: gv.getVertex().getAdjacents()) {
+		/*for (Vertex adj: gv.getVertex().getAdjacents()) {
 			model.disconnect(gv.getVertex(), adj);
-		}
+		}*/
 		model.removeVertex(gv.getVertex());
 		vertex.remove(gv.getVertex());
 	}
