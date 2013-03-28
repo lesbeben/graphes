@@ -27,6 +27,7 @@ public class StdDynGraphModel extends Observable implements DynGraphModel {
 		adjacence = new HashMap<Vertex, List<Edge>>();
 		setChanged();
 	}
+	
 	@Override
 	public int getVerticesNb() {
 		return getVertices().size();
@@ -173,7 +174,7 @@ public class StdDynGraphModel extends Observable implements DynGraphModel {
 	}
 	
 	@Override
-	public void randomize(int n) {
+	public void randomize(int n) {//pas de random pour l'instant, à terminer
 		for (int i = 0; i < n; i++) {
 			addVertex();
 		}
@@ -206,6 +207,7 @@ public class StdDynGraphModel extends Observable implements DynGraphModel {
 	public void refresh() {
 		setChanged();
 	}
+	
 	public List<Colored> getAdjacents(Colored c) {
 		if (c instanceof Edge) {
 			return getAdjacents((Edge) c);
@@ -215,6 +217,7 @@ public class StdDynGraphModel extends Observable implements DynGraphModel {
 			throw new IllegalArgumentException();
 		}
 	}
+	
 	public List<Colored> getAdjacents(Edge e){
 		List<Colored> lc = new LinkedList<Colored>();
 		for (Edge adj: getAdjacenceMap().get(e.getVertices()[0])) {
@@ -235,6 +238,7 @@ public class StdDynGraphModel extends Observable implements DynGraphModel {
 		lc.addAll(v.getAdjacents());
 		return lc;
 	}
+	
 	@Override
 	public int getDegree(Colored c) {
 		return getAdjacents(c).size();

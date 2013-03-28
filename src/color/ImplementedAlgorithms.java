@@ -2,6 +2,10 @@ package color;
 
 public enum ImplementedAlgorithms {
 	
+	/**
+	 * Enum non utilisée, prévue pour permettre le choix des algorithmes.
+	 * 
+	 */
 	DSATUR(Dsatur.class,"DSATUR");
 	
 	private Class<? extends ColorationAlgorithm> type;

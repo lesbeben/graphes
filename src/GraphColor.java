@@ -71,9 +71,9 @@ public class GraphColor {
 		VERTEX,EDGE;
 	}
 	private Tools mode = Tools.VERTEX;
-	private ImplementedAlgorithms setAlgo = null;
+	private ImplementedAlgorithms setAlgo = null; //prévu pour la sélection d'algorithmes
 	private boolean colored = false;
-	private Line2D line = null;
+	private Line2D line = null; //prévue pour résoudre le scintillement du tracé d'arètes
 	
 	public GraphColor(){
 		createModel();
@@ -458,7 +458,7 @@ public class GraphColor {
 		FileInputStream fis = new FileInputStream(f);
         ObjectInputStream ois = new ObjectInputStream(fis);
         model = (DynGraphModel) ois.readObject();
-		Map<Vertex, GraphicVertex> c = (Map<Vertex, GraphicVertex>) ois.readObject(); //???
+		Map<Vertex, GraphicVertex> c = (Map<Vertex, GraphicVertex>) ois.readObject(); //A CHANGER
         graphic.setModel(model, c);
         ois.close();
 	}

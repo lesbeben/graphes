@@ -57,6 +57,12 @@ public interface GraphModel extends ObservableModel, Serializable {
 	public List<Colored> getAdjacents(Colored c);
 	
 	
+	/**
+	 * Renvoie le degré du graphe.
+	 * a completer
+	 * @param c
+	 * @return
+	 */
 	public int getDegree(Colored c);
 	
 	//COMMANDES
